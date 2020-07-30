@@ -20,9 +20,9 @@ connection.connect();
 const multer = require('multer');
 const upload = multer({dest : './upload'});
   
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
 
+app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json());
 
 app.get('/api/todolists',(req,res) => {
     connection.query(
@@ -54,6 +54,20 @@ app.post('/api/todolists', upload.single('image'), (req,res) => {
     let id = req.body.ID;
     console.log(req.body);
     let params = [req.body.job,req.body.startDate,req.body.endDate,req.body.desc];
+    connection.query(sql, params,
+        (err,rows,fields) => {
+            res.send(rows);
+        }
+    )
+})
+
+app.post('/api/todolistsDelete', upload.single('image'), (req,res) => {
+    app.use(bodyParser.json());
+    let sql = 'DELETE FROM TODO_LIST WHERE ID = ?';
+    
+    let id = req.body.ID;
+    console.log(req.body.deleteId);
+    let params = [req.body.deleteId];
     connection.query(sql, params,
         (err,rows,fields) => {
             res.send(rows);
